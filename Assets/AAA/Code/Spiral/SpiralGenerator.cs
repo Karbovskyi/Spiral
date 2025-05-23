@@ -2,61 +2,56 @@ using System;
 using System.Collections.Generic;
 using Shapes;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
+using Zenject;
 
-public class SpiralGenerator : MonoBehaviour
+public interface ISpiralGenerator
 {
-    public int Count;
-    
-    [Header("Spiral Settings")]
-    public float turns = 5f;
-    public float radiusStart = 1f;
-    public float radiusStep = 1f;
-    public float spiralThickness = 0.1f;
-    public float detailPerUnit = 20f;
-    public bool clockwise = true;
-    public float angleOffsetDeg = 0f;
-    public Vector2 center = Vector2.zero;
-    
-    [SerializeField] private Polyline _spiralPolyline;
+    void GenerateSpiral();
+}
 
-    public void Update()
+public class SpiralGenerator : IInitializable, ISpiralGenerator
+{
+    private readonly SpiralStats _spiralStats;
+    private readonly Polyline _spiralPolyline;
+
+    public SpiralGenerator(SpiralStats spiralStats, Polyline spiralPolyline)
     {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            GenerateSpiral();
-        }
+        _spiralStats = spiralStats;
+        _spiralPolyline = spiralPolyline;
     }
-
-
+    
+    public void Initialize()
+    {
+        GenerateSpiral();
+    }
+    
     public void GenerateSpiral()
     {
         List<Vector2> dots = GenerateArchimedeanSpiral(
-            turns,
-            radiusStart,
-            radiusStep,
-            detailPerUnit,
-            clockwise,
-            angleOffsetDeg,
-            center
+            _spiralStats.Turns,
+            _spiralStats.RadiusStart,
+            _spiralStats.RadiusStep,
+            _spiralStats.DetailPerUnit,
+            _spiralStats.Clockwise,
+            _spiralStats.AngleOffsetDeg,
+            _spiralStats.Center
         );
-        
-        Count = dots.Count;
         
         _spiralPolyline.points.Clear();
         
-                
-        for (var i = 0; i < dots.Count; i++) 
-            _spiralPolyline.AddPoint(dots[i]);
-
-        _spiralPolyline.Thickness = spiralThickness;
+        float step = dots.Count;
+        for (var i = 0; i < dots.Count; i++)
+        {
+            float x = i / step;
+            Color color = _spiralStats.FillGradient.Evaluate(x);
+            _spiralPolyline.AddPoint(dots[i], color);
+        } 
         
+        _spiralPolyline.Thickness = _spiralStats.SpiralThickness;
         _spiralPolyline.meshOutOfDate = true;
-        
     }
     
-    public static List<Vector2> GenerateArchimedeanSpiral(
+    private static List<Vector2> GenerateArchimedeanSpiral(
         float turns,
         float radiusStart,
         float radiusStep,
