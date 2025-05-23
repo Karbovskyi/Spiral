@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70af9f4037e74b40a88b261e85e7e8e6, type: 3}
   m_Name: Test3
   m_EditorClassIdentifier: 
-  SpiralThickness: 0.2
   RadiusStart: 1
   RadiusStep: 3
+  SpiralThickness: 0.2
   Clockwise: 0
-  AngleOffsetDeg: 90
   Center: {x: 0, y: 0}
-  AngleOffsetDegChangeSpeed: 40
+  AngleOffsetDeg: 0
+  SpiralRotationSpeed: 40
   BulletSpeed: 8
   BulletDistance: 300
   BulletRadius: 0.2
