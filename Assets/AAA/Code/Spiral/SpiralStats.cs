@@ -12,4 +12,11 @@ public class SpiralStats : ScriptableObject
     public bool Clockwise = true;
     public float AngleOffsetDeg = 0f;
     public Vector2 Center = Vector2.zero;
+    
+    [Header("Distribution Settings")]
+    [Tooltip("Регулює розподіл точок. 0 = Оптимізація (менше точок назовні), 1 = Якість (однакова щільність всюди)")]
+    [Range(0, 1)]
+    public float DistributionFactor = 0.5f; // Поставимо 0.5 як збалансоване значення за замовчуванням
+
+    public float AngleOffsetDegChangeSpeed=10;
 }

@@ -8,15 +8,14 @@ public interface ISpiralGenerator
 {
     void GenerateSpiral();
 }
-
-public class SpiralGenerator : IInitializable, ISpiralGenerator
+public class SpiralGenerator : IInitializable, ISpiralGenerator, ITickable
 {
-    private readonly SpiralStats _spiralStats;
+    private readonly SpiralStats _stats;
     private readonly Polyline _spiralPolyline;
 
     public SpiralGenerator(SpiralStats spiralStats, Polyline spiralPolyline)
     {
-        _spiralStats = spiralStats;
+        _stats = spiralStats;
         _spiralPolyline = spiralPolyline;
     }
     
@@ -27,85 +26,98 @@ public class SpiralGenerator : IInitializable, ISpiralGenerator
     
     public void GenerateSpiral()
     {
-        List<Vector2> dots = GenerateArchimedeanSpiral(
-            _spiralStats.Turns,
-            _spiralStats.RadiusStart,
-            _spiralStats.RadiusStep,
-            _spiralStats.DetailPerUnit,
-            _spiralStats.Clockwise,
-            _spiralStats.AngleOffsetDeg,
-            _spiralStats.Center
-        );
+        List<Vector2> dots = GenerateSpiralPoints();
         
         _spiralPolyline.points.Clear();
         
-        float step = dots.Count;
+        if (dots.Count < 2) return;
+
+        float stepCount = dots.Count;
         for (var i = 0; i < dots.Count; i++)
         {
-            float x = i / step;
-            Color color = _spiralStats.FillGradient.Evaluate(x);
+            float gradientPosition = i / (stepCount - 1);
+            Color color = _stats.FillGradient.Evaluate(gradientPosition);
             _spiralPolyline.AddPoint(dots[i], color);
         } 
         
-        _spiralPolyline.Thickness = _spiralStats.SpiralThickness;
+        _spiralPolyline.Thickness = _stats.SpiralThickness;
         _spiralPolyline.meshOutOfDate = true;
     }
     
-    private static List<Vector2> GenerateArchimedeanSpiral(
-        float turns,
-        float radiusStart,
-        float radiusStep,
-        float detailPerUnit,
-        bool clockwise,
-        float angleOffsetDeg,
-        Vector2 center
-    )
+    private List<Vector2> GenerateSpiralPoints()
     {
         List<Vector2> result = new();
 
-        float angleOffsetRad = angleOffsetDeg * Mathf.Deg2Rad;
-        float thetaMax = turns * 2f * Mathf.PI;
-        float b = radiusStep / (2f * Mathf.PI); // r = a + bθ
+        if (_stats.Turns <= 0 || _stats.DetailPerUnit <= 0)
+        {
+            return result;
+        }
 
-        float direction = clockwise ? -1f : 1f;
+        float thetaMax = _stats.Turns * 2f * Mathf.PI;
+        float b = _stats.RadiusStep / (2f * Mathf.PI);
+        float stepSize = 1f / _stats.DetailPerUnit;
 
         float theta = 0f;
-        float stepSize = 1f / detailPerUnit;
-        float accumulatedDistance = 0f;
-
-        Vector2 prev = Vector2.zero;
-        bool firstPoint = true;
-
         while (theta <= thetaMax)
         {
-            float r = radiusStart + b * theta;
-            float angle = direction * (theta + angleOffsetRad);
-            float x = r * Mathf.Cos(angle) + center.x;
-            float y = r * Mathf.Sin(angle) + center.y;
-            Vector2 current = new Vector2(x, y);
+            result.Add(GetWorldSpiralPoint(theta, b));
+            
+            if (theta >= thetaMax) break;
+            
+            float r = _stats.RadiusStart + b * theta;
+            float effectiveRadius = Mathf.Max(0.1f, r); // Захист від ділення на нуль
 
-            if (firstPoint)
-            {
-                result.Add(current);
-                firstPoint = false;
-            }
-            else
-            {
-                float segmentLength = Vector2.Distance(prev, current);
-                accumulatedDistance += segmentLength;
+            // --- ОСНОВНА ЛОГІКА З КОЕФІЦІЄНТОМ ---
 
-                if (accumulatedDistance >= stepSize)
-                {
-                    result.Add(current);
-                    accumulatedDistance = 0f;
-                }
-            }
+            // 1. Розраховуємо крок для "Оптимізації за кривиною" (постійний кутовий крок).
+            // Щоб крок був адекватним, нормуємо його до початкового радіуса.
+            float thetaStepOptimized = stepSize / Mathf.Max(0.1f, _stats.RadiusStart);
 
-            prev = current;
-            theta += 0.01f;
+            // 2. Розраховуємо крок для "Стабільної візуальної якості" (постійний крок по довжині).
+            float thetaStepQuality = stepSize / effectiveRadius;
+
+            // 3. Змішуємо два підходи за допомогою вашого коефіцієнта DistributionFactor.
+            float thetaStep = Mathf.Lerp(thetaStepOptimized, thetaStepQuality, _stats.DistributionFactor);
+
+            theta += thetaStep;
         }
 
         return result;
     }
-}
+    
+    private Vector2 GetWorldSpiralPoint(float theta, float b)
+    {
+        float r = _stats.RadiusStart + b * theta;
+        
+        float direction = _stats.Clockwise ? -1f : 1f;
+        float angle = direction * theta + (_stats.AngleOffsetDeg * Mathf.Deg2Rad);
 
+        float x = r * Mathf.Cos(angle) + _stats.Center.x;
+        float y = r * Mathf.Sin(angle) + _stats.Center.y;
+
+        return new Vector2(x, y);
+    }
+
+    public void Tick()
+    {
+
+        if(_stats.AngleOffsetDegChangeSpeed == 0) return;
+        
+            // 1. Змінюємо кут зсуву з часом
+            _stats.AngleOffsetDeg += _stats.AngleOffsetDegChangeSpeed * Time.deltaTime;
+
+            // 2. (Опціонально) "Зациклюємо" кут, щоб він не ріс до нескінченності
+            if (_stats.AngleOffsetDeg > 360f)
+            {
+                _stats.AngleOffsetDeg -= 360f;
+            }
+            else if (_stats.AngleOffsetDeg < -360f)
+            {
+                _stats.AngleOffsetDeg += 360f;
+            }
+
+            // 3. Даємо команду генератору перемалювати спіраль з новим кутом
+            _spiralPolyline.transform.parent.rotation = Quaternion.Euler(0, 0, _stats.AngleOffsetDeg);
+        
+    }
+}

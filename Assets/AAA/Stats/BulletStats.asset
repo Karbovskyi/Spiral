@@ -15,4 +15,4 @@ MonoBehaviour:
   Prefab: {fileID: 3231672058298713418, guid: 63b2c5985f662db41b44d7b81a6bf266, type: 3}
   Speed: 5
   Radius: 0.2
-  Distance: 300
+  Distance: 100

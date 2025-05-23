@@ -6,4 +6,5 @@ public class ShooterStats : ScriptableObject
 {
     public float ShootingInterval = 0.5f;
     public float RotatingSpeed = 1f;
+    public bool AutoMove = false;
 }
