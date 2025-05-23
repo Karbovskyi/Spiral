@@ -1,16 +1,17 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "TestingStats", menuName = "Stats/TestingStats")]
 public class TestingStats : ScriptableObject
 {
     [Header("Spiral")]
-    public float SpiralThickness = 0.2f;
     public float RadiusStart = 1f;
     public float RadiusStep = 1f;
+    public float SpiralThickness = 0.2f;
     public bool Clockwise = true;
-    public float AngleOffsetDeg = 0f;
     public Vector2 Center = Vector2.zero;
-    public float AngleOffsetDegChangeSpeed=0;
+    public float AngleOffsetDeg = 0f;
+    [FormerlySerializedAs("AngleOffsetDegChangeSpeed")] public float SpiralRotationSpeed=0;
     
     
     [Header("Bullet")]

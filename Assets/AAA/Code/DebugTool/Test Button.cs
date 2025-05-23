@@ -47,13 +47,13 @@ public class TestButton : MonoBehaviour
         _spiralStats.Clockwise = _TestingStats[i].Clockwise;
         _spiralStats.Center = _TestingStats[i].Center;
         _spiralStats.AngleOffsetDeg = _TestingStats[i].AngleOffsetDeg;
-        _spiralStats.AngleOffsetDegChangeSpeed = _TestingStats[i].AngleOffsetDegChangeSpeed;
+        _spiralStats.SpiralRotationSpeed = _TestingStats[i].SpiralRotationSpeed;
         _spiralStats.RadiusStart = _TestingStats[i].RadiusStart;
         _shooterStats.ShootingInterval = _TestingStats[i].ShootingInterval;
         _shooterStats.RotatingSpeed = _TestingStats[i].RotatingSpeed;
         _shooterStats.AutoMove = _TestingStats[i].AutoMove;
         _bulletStats.Speed = _TestingStats[i].BulletSpeed;
-        _bulletStats.Distance = _TestingStats[i].BulletDistance;
+        _bulletStats.DistanceToSelfDestruct = _TestingStats[i].BulletDistance;
         _bulletStats.Radius = _TestingStats[i].BulletRadius;
     }
 }

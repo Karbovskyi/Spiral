@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Shapes;
 using UnityEngine;
@@ -100,24 +99,24 @@ public class SpiralGenerator : IInitializable, ISpiralGenerator, ITickable
 
     public void Tick()
     {
+        if(_stats.SpiralRotationSpeed != 0)
+            RotateSpiral();
+    }
 
-        if(_stats.AngleOffsetDegChangeSpeed == 0) return;
+    private void RotateSpiral()
+    {
+        _stats.AngleOffsetDeg += _stats.SpiralRotationSpeed * Time.deltaTime;
+
+        //"Зациклюємо" кут, щоб він не ріс до нескінченності
+        if (_stats.AngleOffsetDeg > 360f)
+        {
+            _stats.AngleOffsetDeg -= 360f;
+        }
+        else if (_stats.AngleOffsetDeg < -360f)
+        {
+            _stats.AngleOffsetDeg += 360f;
+        }
         
-            // 1. Змінюємо кут зсуву з часом
-            _stats.AngleOffsetDeg += _stats.AngleOffsetDegChangeSpeed * Time.deltaTime;
-
-            // 2. (Опціонально) "Зациклюємо" кут, щоб він не ріс до нескінченності
-            if (_stats.AngleOffsetDeg > 360f)
-            {
-                _stats.AngleOffsetDeg -= 360f;
-            }
-            else if (_stats.AngleOffsetDeg < -360f)
-            {
-                _stats.AngleOffsetDeg += 360f;
-            }
-
-            // 3. Даємо команду генератору перемалювати спіраль з новим кутом
-            _spiralPolyline.transform.parent.rotation = Quaternion.Euler(0, 0, _stats.AngleOffsetDeg);
-        
+        _spiralPolyline.transform.parent.rotation = Quaternion.Euler(0, 0, _stats.AngleOffsetDeg);
     }
 }

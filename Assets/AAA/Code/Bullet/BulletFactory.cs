@@ -25,7 +25,7 @@ public class BulletFactory : IBulletFactory
         Bullet bullet = _bulletPool.Get();
         bullet.Speed = _bulletStats.Speed;
         bullet.Radius = _bulletStats.Radius;
-        bullet.RemainDistance = _bulletStats.Distance;
+        bullet.DistanceToSelfDestruct = _bulletStats.DistanceToSelfDestruct;
         return bullet;
     }
 

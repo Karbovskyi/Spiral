@@ -16,7 +16,7 @@ MonoBehaviour:
   RadiusStart: 1
   RadiusStep: 3
   Clockwise: 0
-  AngleOffsetDeg: 0
+  AngleOffsetDeg: 90
   Center: {x: 0, y: 0}
   AngleOffsetDegChangeSpeed: 40
   BulletSpeed: 8

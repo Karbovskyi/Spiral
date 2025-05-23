@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-
 public interface IShootingService
 {
     void Shot(Vector2 position, Vector2 direction);
@@ -43,7 +42,7 @@ public class ShootingService : ITickable, IShootingService
             node = currentNode.Next;
             Bullet bullet = currentNode.Value;
             
-            if (bullet.RemainDistance <= 0)
+            if (bullet.DistanceToSelfDestruct <= 0)
             {
                 _bullets.Remove(currentNode);
                 _bulletFactory.DestroyBullet(bullet);
@@ -52,24 +51,19 @@ public class ShootingService : ITickable, IShootingService
             {
                 float distance = bullet.Speed * Time.deltaTime;
                 bullet.Position += bullet.Direction * distance;
-                bullet.RemainDistance -= distance;
+                bullet.DistanceToSelfDestruct -= distance;
                 
-                if (!bullet.IsInSpiralZone)
+                bool isCollidingNow = _spiralPhysics.IsBulletCollidedWithSpiral(bullet);
+                bool wasInContact = bullet.IsInSpiralContact;
+                
+                if (!wasInContact && isCollidingNow)
                 {
-                    if (_spiralPhysics.IsBulletCollidedWithSpiral(bullet))
-                    {
-                        bullet.IsInSpiralZone = true;
-                        _spiralPhysics.ReflectBullet(bullet);
-                        //bullet.OnCollision(); // якщо є якась логіка після зіткнення
-                    }
+                    bullet.IsInSpiralContact = true;
+                    _spiralPhysics.ReflectBullet(bullet);
                 }
-                else
+                else if (wasInContact && !isCollidingNow)
                 {
-                    
-                    if (!_spiralPhysics.IsBulletCollidedWithSpiral(bullet))
-                    {
-                        bullet.IsInSpiralZone = false;   
-                    }
+                    bullet.IsInSpiralContact = false;
                 }
             }
         }

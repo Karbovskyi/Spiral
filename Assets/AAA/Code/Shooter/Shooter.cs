@@ -1,9 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-public interface IShooter
-{
-}
+public interface IShooter { }
 
 public class Shooter : ITickable, IShooter
 {
@@ -40,28 +38,6 @@ public class Shooter : ITickable, IShooter
         }
     }
 
-    private void Move(Vector2 targetDirection)
-    {
-        //_shooterTransform.Rotate(0f, 0f, 10 * Time.deltaTime);
-
-        // 1. Визначаємо цільовий кут з вектора напрямку.
-        // Atan2 повертає кут в радіанах, конвертуємо його в градуси.
-        // Додаємо -90, тому що в Unity кут 0 градусів - це вісь X (праворуч),
-        // а ми хочемо, щоб об'єкт дивився "вгору" (transform.up).
-        float targetAngle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg - 90f;
-
-        // 2. Створюємо цільовий поворот (Quaternion) з цього кута
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
-
-        // 3. Плавно повертаємо поточний об'єкт до цільового повороту
-        // Quaternion.RotateTowards забезпечує поворот з постійною кутовою швидкістю.
-        _shooterTransform.rotation = Quaternion.RotateTowards(
-            _shooterTransform.rotation, 
-            targetRotation, 
-            _shooterStats.RotatingSpeed * Time.deltaTime
-        );
-    }
-
     private void AutoMove()
     {
         _shooterTransform.Rotate(Vector3.forward, _shooterStats.RotatingSpeed * Time.deltaTime);
@@ -76,5 +52,22 @@ public class Shooter : ITickable, IShooter
             _timerToShot = _shooterStats.ShootingInterval;
             _shootingService.Shot(_shotStartPosition.position, _shotStartPosition.up);
         }
+    }
+
+    private void Move(Vector2 targetDirection)
+    {
+        // 1. Визначаємо цільовий кут з вектора напрямку.
+        // Atan2 повертає кут в радіанах, конвертуємо його в градуси.
+        // Додаємо -90, тому що в Unity кут 0 градусів - це вісь X (праворуч),
+        // а ми хочемо, щоб об'єкт дивився "вгору" (transform.up).
+        float targetAngle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg - 90f;
+        
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
+        
+        _shooterTransform.rotation = Quaternion.RotateTowards(
+            _shooterTransform.rotation, 
+            targetRotation, 
+            _shooterStats.RotatingSpeed * Time.deltaTime
+        );
     }
 }
