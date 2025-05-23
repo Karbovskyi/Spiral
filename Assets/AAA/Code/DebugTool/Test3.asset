@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpiralThickness: 0.2
   RadiusStart: 1
-  RadiusStep: 1.5
+  RadiusStep: 3
   Clockwise: 0
-  AngleOffsetDeg: -90
+  AngleOffsetDeg: 0
   Center: {x: 0, y: 0}
-  AngleOffsetDegChangeSpeed: 0
+  AngleOffsetDegChangeSpeed: 40
   BulletSpeed: 8
   BulletDistance: 300
   BulletRadius: 0.2

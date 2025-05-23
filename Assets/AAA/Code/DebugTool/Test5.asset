@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpiralThickness: 0.2
   RadiusStart: 1
-  RadiusStep: 1
+  RadiusStep: 2
   Clockwise: 1
   AngleOffsetDeg: 135
   Center: {x: 0, y: 0}

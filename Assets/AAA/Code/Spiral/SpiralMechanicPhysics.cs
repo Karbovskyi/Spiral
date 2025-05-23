@@ -1,13 +1,19 @@
 using UnityEngine;
-public class SpiralMechanicPhysics
+using Zenject;
+
+public class SpiralMechanicPhysics : IInitializable
 {
     private readonly SpiralStats _stats;
-    private readonly float _b;
-    private readonly float _maxTheta;
+    private float _b;
+    private float _maxTheta;
 
     public SpiralMechanicPhysics(SpiralStats stats)
     {
         _stats = stats;
+    }
+    
+    public void Initialize()
+    {
         _b = _stats.RadiusStep / (2f * Mathf.PI);
         _maxTheta = _stats.Turns * 2f * Mathf.PI;
     }

@@ -48,6 +48,7 @@ MonoBehaviour:
   SpiralThickness: 0.2
   DetailPerUnit: 4
   Clockwise: 1
-  AngleOffsetDeg: 0
+  AngleOffsetDeg: -42.13115
   Center: {x: 0, y: 0}
   DistributionFactor: 0.85
+  AngleOffsetDegChangeSpeed: -20

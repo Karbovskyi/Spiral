@@ -50,7 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blendMode: 0
   scaleMode: 0
-  color: {r: 0.4566037, g: 0.06461367, b: 0.20014212, a: 1}
+  color: {r: 0.46543002, g: 1, b: 0, a: 1}
   detailLevel: 2
   culling: 0
   boundsPadding: 0
@@ -203,7 +203,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blendMode: 0
   scaleMode: 0
-  color: {r: 0.7372549, g: 0, b: 0.25490198, a: 1}
+  color: {r: 0, g: 0, b: 0, a: 1}
   detailLevel: 2
   culling: 0
   boundsPadding: 0

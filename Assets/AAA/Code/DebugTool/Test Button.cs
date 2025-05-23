@@ -16,22 +16,27 @@ public class TestButton : MonoBehaviour
 
     public List<TestingStats> _TestingStats;
 
+    [Inject]
+    public void Construct(SpiralStats spiralStats, BulletStats bulletStats, ShooterStats shooterStats)
+    {
+        _spiralStats = spiralStats;
+        _bulletStats = bulletStats;
+        _shooterStats = shooterStats;
+        
+        UpdateStats(StaticHelper.i);
+    }
     private void Awake()
     {
-        _text.text = "Test N" + PlayerPrefs.GetInt("TestButton");
+        _text.text = "Test N" + StaticHelper.i;
     }
 
     public void OnClick()
     {
-        int i = PlayerPrefs.GetInt("TestButton");
-
-        if (i + 1 >= _TestingStats.Count)
-            i = 0;
+        if (StaticHelper.i + 1 >= _TestingStats.Count)
+            StaticHelper.i = 0;
         else
-            i += 1;
+            StaticHelper.i += 1;
         
-        PlayerPrefs.SetInt("TestButton", i);
-        UpdateStats(i);
         SceneManager.LoadScene("BootScene");
     }
 

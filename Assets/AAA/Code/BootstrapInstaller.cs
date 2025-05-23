@@ -16,16 +16,17 @@ public class BootstrapInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
-        Container.BindInterfacesTo<InputService>().AsSingle().WithArguments(Camera);
-        Container.BindInterfacesTo<SpiralGenerator>().AsSingle().WithArguments(SpiralStats, SpiralPolyline);
-        Container.BindInterfacesTo<BulletFactory>().AsSingle().WithArguments(BulletStats);
-        Container.BindInterfacesAndSelfTo<SpiralMechanicPhysics>().AsSingle().WithArguments(SpiralStats);
-        Container.BindInterfacesTo<ShootingService>().AsSingle();
-        Container.BindInterfacesTo<Shooter>().AsSingle().WithArguments(ShooterStats, ShooterTransform, ShotStartPosition);
+        Application.targetFrameRate = 1000;
         
-        // For Testing
         Container.BindInstance(SpiralStats).AsSingle();
         Container.BindInstance(ShooterStats).AsSingle();
         Container.BindInstance(BulletStats).AsSingle();
+        
+        Container.BindInterfacesTo<InputService>().AsSingle().WithArguments(Camera);
+        Container.BindInterfacesTo<SpiralGenerator>().AsSingle().WithArguments( SpiralPolyline);
+        Container.BindInterfacesTo<BulletFactory>().AsSingle();
+        Container.BindInterfacesAndSelfTo<SpiralMechanicPhysics>().AsSingle();
+        Container.BindInterfacesTo<ShootingService>().AsSingle();
+        Container.BindInterfacesTo<Shooter>().AsSingle().WithArguments(ShooterTransform, ShotStartPosition);
     }
 }
